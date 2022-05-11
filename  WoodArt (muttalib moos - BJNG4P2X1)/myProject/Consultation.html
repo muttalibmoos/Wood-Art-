@@ -1,0 +1,212 @@
+<?php
+
+require_once "config.php";
+require_once "session.php";
+$error = '';
+if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit']))
+{
+$email = trim($_POST['email']);
+$password = trim($_POST['password']);
+
+if($query = $db->prepare("SELECT * FROM users WHERE email = ?"))
+    {
+        if(empty($email))
+            {
+                $error .='<p classs="error"> please enter your email </p> ';
+            }
+
+        if(empty($erorr))
+            {
+                if($query = $db->prepare("SELECT * FROM users WHERE email = ?"))
+                    {
+                        $query->bind_parm('s', $email);
+                        $query->execute();
+                        $row = $query->fetch();
+                        if($row)
+                            {
+                                if(password_verify($password,$row['passowrd']))
+                                    {
+                                        $_SESSION["userid"] = $row['id'];
+                                        $_SESSION["user"] = $row;
+                                        header("location: Home.php");
+                                        exit;
+                                    }
+                                        else
+                                        {
+                                            $error .='<p classs="error"> the word was incorrect !</p> ';
+                                        }
+                            }
+                            else
+                                {
+                                    $error .='<p classs="error"> this email has not been registered /p> ';
+                                }  
+                    }
+
+                    $query->close();
+            }
+
+            mysqli_close($db);
+    }
+
+?>
+    <!doctype html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>WoodArt_Consultation_Page</title>
+
+        <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/album/">
+
+        <!-- Bootstrap core CSS -->
+        <link href="assets/dist/css/bootstrap.css" rel="stylesheet">
+
+        <style>
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+        </style>
+        <!-- Custom styles for this template -->
+        <link href="Consultation.css" rel="stylesheet">
+    </head>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">WoodArt</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="Home.html">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Products.html">Products<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Projects.html">Projects<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Consultation.html">Consultation<span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+
+            <div>
+                <button class="btn btn-primary ml-2 my-2 my-sm-0" data-toggle="modal" data-target="#loginmodal" type="submit">Sign in</button>
+            </div>
+
+            <div class="modal fade" id="loginmodal" tabindex="-1" role="dialog" aria-labelledby="loginmodal" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginmodaltitle">Sign in Here</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="sign_in.php" method="POST">
+
+                                <div class="form-label-group">
+                                    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                                    <label for="inputEmail">Email address</label>
+                                </div>
+
+                                <div class="form-label-group">
+                                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                                    <label for="inputPassword">Password</label>
+                                </div>
+
+                                <div class="checkbox mb-3">
+                                    <label>
+                          <input type="checkbox" value="remember-me"> Remember me
+                        </label>
+                                </div>
+                                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                                <p> don't have an account ? </p>
+                                <button class="btn btn-lg btn-primary btn-block" type="submit" placeholder="Sign up" aria-label="Sign in" onclick="window.location = 'Sign up.html';"> Sign up </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" placeholder="cart" aria-label="cart" onclick="window.location = 'Products.html';"> Cart </button>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <body>
+
+        <main>
+
+            <form class="consultation-form" action="consultationform.php" method="post">
+
+                <div class="text-center mb-4">
+                    <img class="mb-4" src="images/woodlogo.jpg" alt="Avatar" width="350" height="250">
+                    <h1>Send us an E-mail</h1>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="name" id="First Name" class="form-control" placeholder="Your First Name" required>
+                    <label for="name">First Name</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="name" id="Last Name" class="form-control" placeholder="Your Last Name" required>
+                    <label for="name">Last Name</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="email" id="inputEmail" class="form-control" placeholder="Your E-mail address" required autofocus>
+                    <label for="inputEmail">Email address</label>
+                </div>
+
+                <div class="form-label-group">
+                    <input type="subject" id="subject" class="form-control" placeholder="The Subject" required autofocus>
+                    <label for="subject">Subject</label>
+                </div>
+
+                <div class="form-label-group">
+                    <textarea id="message" name="message" class="form-control" placeholder="Your Message" rows="4" cols="50"></textarea>
+
+                </div>
+
+                </label>
+                </div>
+                <button class="btn btn-lg btn-secondary btn-block" type="submit">Send E-mail</button>
+            </form>
+
+        </main>
+        <footer class="my-5 pt-5 text-muted text-center text-small">
+            <p class="mb-1">&copy; 2017-2020 Company Name</p>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="#">Privacy</a></li>
+                <li class="list-inline-item"><a href="#">Terms</a></li>
+                <li class="list-inline-item"><a href="#">Support</a></li>
+            </ul>
+        </footer>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script>
+            window.jQuery || document.write('<script src="assets/js/vendor/jquery.slim.min.js"><\/script>')
+        </script>
+        <script src="assets/dist/js/bootstrap.bundle.js"></script>
+
+    </body>
+
+    </html>
